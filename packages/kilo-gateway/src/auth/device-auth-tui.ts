@@ -4,6 +4,7 @@ import { poll } from "./polling.js"
 import { initiateDeviceAuth, pollDeviceAuth } from "./device.js"
 import { getKiloProfile, getKiloDefaultModel, defaultOrganizationId } from "../api/profile.js"
 import { POLL_INTERVAL_MS } from "../api/constants.js"
+import { linkAnacondaAccount } from "./link-anaconda.js"
 import type { AuthOuathResult } from "@kilocode/plugin"
 
 /**
@@ -83,6 +84,9 @@ export async function authenticateWithDeviceAuthTUI(inputs?: Record<string, stri
 
       // Fetch default model
       await getKiloDefaultModel(token, organizationId)
+
+      // Link Kilo account to Anaconda and save API key to keyring (non-fatal)
+      await linkAnacondaAccount(token).catch(() => {})
 
       // Return success with OAuth credentials
       return {
